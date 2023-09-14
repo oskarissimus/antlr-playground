@@ -26,6 +26,16 @@ class SymbolDefinitionListener(bdsListener):
         end = Position(symbol.line, symbol.column + len(function_name))
         self.symbol_map[function_name] = Range(start, end)
 
+    def enterVariableInitImplicit(
+        self, ctx: bdsParser.VariableInitImplicitContext
+    ) -> None:
+        token: TerminalNodeImpl = ctx.ID()
+        variable_name = token.getText()
+        symbol = token.getSymbol()
+        start = Position(symbol.line, symbol.column)
+        end = Position(symbol.line, symbol.column + len(variable_name))
+        self.symbol_map[variable_name] = Range(start, end)
+
 
 class SymbolTable:
     def __init__(self, source_code: str) -> None:

@@ -24,6 +24,9 @@ class SymbolDefinitionListener(Listener):
     ) -> None:
         self._add_symbol(ctx.ID())
 
+    def enterVariableInit(self, ctx: Parser.VariableInitContext) -> None:
+        self._add_symbol(ctx.ID())
+
     def _add_symbol(self, token: TerminalNodeImpl) -> None:
         symbol_name = token.getText()
         symbol = token.getSymbol()

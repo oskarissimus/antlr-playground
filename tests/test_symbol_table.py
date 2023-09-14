@@ -9,7 +9,8 @@ int returnThree() {
     return 3
 }
 two := returnTwo()
-three := returnThree()
+int three
+three = returnThree()
 println two + three
 """
 import pytest
@@ -24,7 +25,7 @@ from lsprotocol.types import Range, Position
         ("returnTwo", Range(Position(5, 4), Position(5, 13))),
         ("returnThree", Range(Position(8, 4), Position(8, 15))),
         ("two", Range(Position(11, 0), Position(11, 3))),
-        ("three", Range(Position(12, 0), Position(12, 5))),
+        ("three", Range(Position(12, 4), Position(12, 9))),
     ],
 )
 def test_symbol_table(symbol, expected_range):

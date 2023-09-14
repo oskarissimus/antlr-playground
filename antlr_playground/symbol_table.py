@@ -16,23 +16,15 @@ class SymbolDefinitionListener(bdsListener):
     def __init__(self) -> None:
         self.symbol_map: dict[str, Range] = {}
 
-    def enterClassDef(self, ctx: bdsParser.ClassDefContext) -> None:
-        token: TerminalNodeImpl = ctx.ID(0)
-        class_name = token.getText()
+    def enterFunctionDeclaration(
+        self, ctx: bdsParser.FunctionDeclarationContext
+    ) -> None:
+        token: TerminalNodeImpl = ctx.ID()
+        function_name = token.getText()
         symbol = token.getSymbol()
         start = Position(symbol.line, symbol.column)
-        end = Position(symbol.line, symbol.column + len(class_name))
-        self.symbol_map[class_name] = Range(start, end)
-
-    # def enterFunctionDeclaration(
-    #     self, ctx: bdsParser.FunctionDeclarationContext
-    # ) -> None:
-    #     token: TerminalNodeImpl = ctx.ID()
-    #     function_name = token.getText()
-    #     symbol = token.getSymbol()
-    #     start = Position(symbol.line, symbol.column)
-    #     end = Position(symbol.line, symbol.column + len(function_name))
-    #     self.symbol_map[function_name] = Range(start, end)
+        end = Position(symbol.line, symbol.column + len(function_name))
+        self.symbol_map[function_name] = Range(start, end)
 
 
 class SymbolTable:

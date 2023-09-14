@@ -20,7 +20,9 @@ from lsprotocol.types import Range, Position
 @pytest.mark.parametrize(
     "symbol,expected_range",
     [
-        ("TheQuickBrownFox", Range(Position(1, 6), Position(1, 22))),
+        ("TheQuickBrownFox", Range(Position(2, 9), Position(2, 25))),
+        ("returnTwo", Range(Position(5, 4), Position(5, 13))),
+        ("returnThree", Range(Position(8, 4), Position(8, 15))),
     ],
 )
 def test_symbol_table(symbol, expected_range):

@@ -6,35 +6,30 @@ from antlr4 import (
 )
 from antlr4.tree.Tree import TerminalNodeImpl
 
-from antlr_playground.grammar.bdsLexer import bdsLexer
-from antlr_playground.grammar.bdsParser import bdsParser
-from antlr_playground.grammar.bdsListener import bdsListener
+from antlr_playground.grammar import Lexer, Parser, Listener
 from lsprotocol.types import Range, Position
 
 
-class SymbolDefinitionListener(bdsListener):
+class SymbolDefinitionListener(Listener):
     def __init__(self) -> None:
         self.symbol_map: dict[str, Range] = {}
 
     def enterFunctionDeclaration(
-        self, ctx: bdsParser.FunctionDeclarationContext
+        self, ctx: Parser.FunctionDeclarationContext
     ) -> None:
-        token: TerminalNodeImpl = ctx.ID()
-        function_name = token.getText()
-        symbol = token.getSymbol()
-        start = Position(symbol.line, symbol.column)
-        end = Position(symbol.line, symbol.column + len(function_name))
-        self.symbol_map[function_name] = Range(start, end)
+        self._add_symbol(ctx.ID())
 
     def enterVariableInitImplicit(
-        self, ctx: bdsParser.VariableInitImplicitContext
+        self, ctx: Parser.VariableInitImplicitContext
     ) -> None:
-        token: TerminalNodeImpl = ctx.ID()
-        variable_name = token.getText()
+        self._add_symbol(ctx.ID())
+
+    def _add_symbol(self, token: TerminalNodeImpl) -> None:
+        symbol_name = token.getText()
         symbol = token.getSymbol()
         start = Position(symbol.line, symbol.column)
-        end = Position(symbol.line, symbol.column + len(variable_name))
-        self.symbol_map[variable_name] = Range(start, end)
+        end = Position(symbol.line, symbol.column + len(symbol_name))
+        self.symbol_map[symbol_name] = Range(start, end)
 
 
 class SymbolTable:
@@ -44,9 +39,9 @@ class SymbolTable:
 
     def _initialize_symbol_map(self) -> dict[str, Range]:
         input_stream = InputStream(self.source_code)
-        lexer = bdsLexer(input_stream)
+        lexer = Lexer(input_stream)
         tokens = CommonTokenStream(lexer)
-        parser = bdsParser(tokens)
+        parser = Parser(tokens)
         listener = SymbolDefinitionListener()
         walker = ParseTreeWalker()
         walker.walk(listener, parser.programUnit())

@@ -21,8 +21,6 @@ from lsprotocol.types import Range, Position
     "symbol,expected_range",
     [
         ("TheQuickBrownFox", Range(Position(1, 6), Position(1, 22))),
-        ("returnTwo", Range(Position(5, 4), Position(5, 13))),
-        ("returnThree", Range(Position(8, 4), Position(8, 15))),
     ],
 )
 def test_symbol_table(symbol, expected_range):

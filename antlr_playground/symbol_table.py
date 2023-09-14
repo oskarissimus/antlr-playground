@@ -20,10 +20,19 @@ class SymbolDefinitionListener(bdsListener):
         token: TerminalNodeImpl = ctx.ID(0)
         class_name = token.getText()
         symbol = token.getSymbol()
-        start_position = Position(symbol.column, symbol.line)
-        end_position = Position(symbol.column, symbol.line + len(class_name))
-        range = Range(start_position, end_position)
-        self.symbol_map[class_name] = range
+        start = Position(symbol.line, symbol.column)
+        end = Position(symbol.line, symbol.column + len(class_name))
+        self.symbol_map[class_name] = Range(start, end)
+
+    # def enterFunctionDeclaration(
+    #     self, ctx: bdsParser.FunctionDeclarationContext
+    # ) -> None:
+    #     token: TerminalNodeImpl = ctx.ID()
+    #     function_name = token.getText()
+    #     symbol = token.getSymbol()
+    #     start = Position(symbol.line, symbol.column)
+    #     end = Position(symbol.line, symbol.column + len(function_name))
+    #     self.symbol_map[function_name] = Range(start, end)
 
 
 class SymbolTable:
@@ -36,10 +45,9 @@ class SymbolTable:
         lexer = bdsLexer(input_stream)
         tokens = CommonTokenStream(lexer)
         parser = bdsParser(tokens)
-        tree = parser.programUnit()
         listener = SymbolDefinitionListener()
         walker = ParseTreeWalker()
-        walker.walk(listener, tree)
+        walker.walk(listener, parser.programUnit())
         return listener.symbol_map
 
     def get(self, symbol: str) -> Optional[Range]:

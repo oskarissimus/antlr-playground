@@ -1,0 +1,7 @@
+class TheQuickBrownFox {
+	void TheQuickBrownFox(string animal) {
+		println "The quick brown fox jumped over a $animal"
+	}
+}
+
+fox := new TheQuickBrownFox() 

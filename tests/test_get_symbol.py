@@ -1,26 +1,34 @@
-from antlr_playground.symbol_finder import get_symbol_at_location
-import pytest
-from lsprotocol.types import Position
-
-code = """
-class TheQuickBrownFox {
+code = """class TheQuickBrownFox {
     void TheQuickBrownFox() {}
 }
 fox := new TheQuickBrownFox()
-void jumpOverTheLazyDog() {}
-jumpOverTheLazyDog()
+int returnTwo() {
+    return 2
+}
+int returnThree() {
+    return 3
+}
+two := returnTwo()
+three := returnThree()
+println two + three
 """
+from antlr_playground.symbol_finder import get_symbol_from_tokens
+import pytest
+from lsprotocol.types import Position
 
 
 @pytest.mark.parametrize(
     "line,character,expected_symbol",
     [
-        (5, 14, "TheQuickBrownFox"),
-        (7, 0, "jumpOverTheLazyDog"),
+        (4, 14, "TheQuickBrownFox"),
+        (11, 8, "returnTwo"),
+        (12, 10, "returnThree"),
+        (13, 8, "two"),
+        (13, 14, "three"),
     ],
 )
 def test_get_symbol_at_location(line, character, expected_symbol):
     assert (
-        get_symbol_at_location(code, Position(line=line, character=character))
+        get_symbol_from_tokens(code, Position(line=line, character=character))
         == expected_symbol
     )
